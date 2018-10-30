@@ -302,9 +302,9 @@ void AnycubicTFTClass::Ls()
 void AnycubicTFTClass::CheckSDCardChange()
 {
 #ifdef SDSUPPORT
-  if (LastSDstatus != IS_SD_INSERTED)
+  if (LastSDstatus != IS_SD_INSERTED())
   {
-    LastSDstatus = IS_SD_INSERTED;
+    LastSDstatus = IS_SD_INSERTED();
     
     if (LastSDstatus)
     {
@@ -598,7 +598,7 @@ void AnycubicTFTClass::GetCommandFromTFT()
           case 8: // A8 GET  SD LIST
 #ifdef SDSUPPORT          
             SelectedDirectory[0]=0;
-            if(!IS_SD_INSERTED)
+            if(!IS_SD_INSERTED())
             {
               ANYCUBIC_SERIAL_PROTOCOLPGM("J02");
               ANYCUBIC_SERIAL_ENTER();
@@ -884,7 +884,7 @@ void AnycubicTFTClass::GetCommandFromTFT()
 
             SelectedDirectory[0]=0;
             
-            if(!IS_SD_INSERTED)
+            if(!IS_SD_INSERTED())
             {
               ANYCUBIC_SERIAL_PROTOCOLPGM("J02"); // J02 SD Card initilized
               ANYCUBIC_SERIAL_ENTER();
