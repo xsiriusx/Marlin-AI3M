@@ -22,7 +22,7 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 - Much more efficient bed heating by using PID control. This uses less power and holds the temperature at a steady level. Highly recommended for printing ABS.
 - Fairly loud fans, while almost every one of them is easily replaced, the stock FW only gives out 9V instead of 12V on the parts cooling fan so some fans like Noctua don't run like they should. This is fixed in this firmware.
 - Even better print quality by adding Linear Advance, S-Curve Acceleration and some tweaks on jerk and acceleration.
-- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor. 
+- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor.
 - Very loud stock stepper motor drivers, easily replaced by Watterott or FYSETC TMC2208. To do that, you'd usually have to flip the connectors on the board, this is not necessary using this firmware.
 - No need to slice and upload custom bed leveling tests, simply start one with a simple G26 command.
 - Easily start an auto PID tune or mesh bed leveling via the special menu (insert SD card, select special menu and press the round arrow)
@@ -49,10 +49,10 @@ I provided three different precompiled hex files: One for no modifications on th
 - Customize if needed and under `Sketch`, select `Export compiled binary`
 - Look for the .hex file in your temporary directory, e.g. `.../AppData/Local/Temp/arduino_build_xxx/` (only the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
 
-### After obtaining the hex file: 
+### After obtaining the hex file:
 
 - Flash the hex with Cura, OctoPrint or similar
-- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer. 
+- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer.
 - Connect to the printer and send the following commands:
 - `M502` - load hard coded default values
 - `M500` - save them to EEPROM
@@ -73,7 +73,7 @@ If you have issues with an uneven bed, this is a great feature.
 - To lower: `G91`, `G1 Z-0.02`, `G90`
 - I also added fine Z axis controls to the special menu, might be easier to use.
 - When done, send `G29 S2` and repeat the process for the next level point. Continue with `G29 S2`every time.
-- After finishing the 25 points, the printer will beep and calculate. 
+- After finishing the 25 points, the printer will beep and calculate.
 - After seeing `ok` in the console, send `M500` to save.
 - Reboot the printer.
 - To ensure your mesh gets used on every print from now on, go into your slicer settings and look for the start GCode
@@ -245,4 +245,3 @@ Notable contributors include:
 ## License
 
 Marlin is published under the [GPLv3 license](https://github.com/MarlinFirmware/Marlin/blob/1.0.x/COPYING.md) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
-
