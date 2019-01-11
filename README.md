@@ -4,8 +4,7 @@ This is my slightly customized version of the [Marlin Firmware](https://github.c
 
 Feel free to discuss issues and work with me further optimizing this firmware!
 
-I am running this version on an i3 Mega Ultrabase V3 (for distinction of the different versions, check [this Thingiverse thread](https://www.thingiverse.com/groups/anycubic-i3-mega/forums/general/topic:27064)).
-Basically, this should work on every Ultrabase version that has two Z-axis endstops. The new Mega-S works too, but calibrating your extruder is mandatory since it needs to have increased E-steps to around fivefold of the original value, see the instructions below.
+The master branch is suited for the i3 Mega Ultrabase with 2 Z-endstops, this branch is only configured for the MEGA01, an older version of the i3 Mega with just one Z-endstop (for distinction of the different versions, check [this Thingiverse thread](https://www.thingiverse.com/groups/anycubic-i3-mega/forums/general/topic:27064)).
 
 Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine. Since I have reduced the acceleration and jerk settings a bit, depending on your slicer the estimated print time might be around 20% lower. You can compensate that loss of speed by raising the general print speed without losing quality.
 
@@ -31,18 +30,7 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 
 ## How to flash this?
 
-I provided three different precompiled hex files: One for no modifications on the stepper motor drivers - good for people who didn't touch anything yet, one for boards with TMC2208 installed and where the connectors have been flipped and one with TMC2208 and the connectors in original orientation.
-
-### Choose your precompiled hex:
-
-- Download the precompiled firmware here: [Releases](https://github.com/davidramiro/Marlin-AI3M/releases)
-- Choose the correct hex file:
-- For TMC2208 with connectors in original orientation, use `Marlin-AI3M-XXXXXX-TMC2208.hex`
-- If you use TMC2208 and already reversed your connectors, use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`
-- If you use a newer version of the TMC2208 that doesn't require the connector to be reversed (TMC2208 "v2.0" written on the PCB, chip on the top side), please also use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`.
-- If you use the original stepper motor drivers, use `Marlin-AI3M-XXXXXX-stock_drivers.hex`.
-
-### Or compile it yourself:
+### Compiling:
 
 - Download Arduino IDE
 - Clone or download this repo
