@@ -9,6 +9,10 @@ Basically, this should work on every Ultrabase version that has two Z-axis endst
 
 Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine. Since I have reduced the acceleration and jerk settings a bit, depending on your slicer the estimated print time might be around 20% lower. You can compensate that loss of speed by raising the general print speed without losing quality.
 
+## Fan PWM branch
+
+This branch is meant to be used for certain parts cooling fans (like some Sunon 5015 fans) that need a software PWM signal to be controlled properly. You need this version if your fan only spins on 100%.
+
 ## Known issues:
 
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
