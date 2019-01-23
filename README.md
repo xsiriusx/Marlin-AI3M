@@ -4,7 +4,9 @@ This is my slightly customized version of the [Marlin Firmware](https://github.c
 
 Feel free to discuss issues and work with me further optimizing this firmware!
 
-The master branch is suited for the i3 Mega Ultrabase with 2 Z-endstops, this branch is only configured for the MEGA01, an older version of the i3 Mega with just one Z-endstop (for distinction of the different versions, check [this Thingiverse thread](https://www.thingiverse.com/groups/anycubic-i3-mega/forums/general/topic:27064)).
+## Single Z endstop branch
+
+The master branch is suited for the i3 Mega Ultrabase with 2 Z-endstops, this branch is configured for the MEGA01, an older version of the i3 Mega with just one Z-endstop (for distinction of the different versions, check [this Thingiverse thread](https://www.thingiverse.com/groups/anycubic-i3-mega/forums/general/topic:27064)).
 
 Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine. Since I have reduced the acceleration and jerk settings a bit, depending on your slicer the estimated print time might be around 20% lower. You can compensate that loss of speed by raising the general print speed without losing quality.
 
@@ -12,8 +14,9 @@ Note: This is just a firmware, not magic. A big part of print quality still depe
 
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
-- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0). If you want to find out what version really is on your printer you can send the code `M115` and read the response.
-- Possible bugs with aborting prints after pausing via display. Simply reboot the printer manually if you find yourself unable to cancel the print.
+- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0).
+- Cancelling prints via display is buggy sometimes, simply reboot the printer when the menu shows an error. Protip: Switch to OctoPrint.
+- A few parts cooling fan models (e.g. some Sunon 5015) might have trouble running slower than 100%. If that's the case, use [this release](https://github.com/davidramiro/Marlin-AI3M/releases/tag/v19.01.22-pwm).
 
 ## Why use this?
 
@@ -23,7 +26,7 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 - Much more efficient bed heating by using PID control. This uses less power and holds the temperature at a steady level. Highly recommended for printing ABS.
 - Fairly loud fans, while almost every one of them is easily replaced, the stock FW only gives out 9V instead of 12V on the parts cooling fan so some fans like Noctua don't run like they should. This is fixed in this firmware.
 - Even better print quality by adding Linear Advance, S-Curve Acceleration and some tweaks on jerk and acceleration.
-- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor. 
+- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor.
 - Very loud stock stepper motor drivers, easily replaced by Watterott or FYSETC TMC2208. To do that, you'd usually have to flip the connectors on the board, this is not necessary using this firmware.
 - No need to slice and upload custom bed leveling tests, simply start one with a simple G26 command.
 - Easily start an auto PID tune or mesh bed leveling via the special menu (insert SD card, select special menu and press the round arrow)
@@ -39,10 +42,10 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 - Customize if needed and under `Sketch`, select `Export compiled binary`
 - Look for the .hex file in your temporary directory, e.g. `.../AppData/Local/Temp/arduino_build_xxx/` (only the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
 
-### After obtaining the hex file: 
+### After obtaining the hex file:
 
 - Flash the hex with Cura, OctoPrint or similar
-- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer. 
+- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer.
 - Connect to the printer and send the following commands:
 - `M502` - load hard coded default values
 - `M500` - save them to EEPROM
@@ -58,7 +61,7 @@ If you have issues with an uneven bed, this is a great feature.
 
 ![Special Menu][menu]
 
-- In this menu, the round arrow is used to execute the command you selected. 
+- In this menu, the round arrow is used to execute the command you selected.
 - Preheat the bed to 60°C with this entry: (if you usually print with a hotter bed, use the Anycubic menu)
 
 ![Preheat bed][preheat]
@@ -133,6 +136,7 @@ G26 C H200 P25 R25
 
 ### Extruder steps
 
+- Get your old E-Steps with `M503`. Look for the line starting with `M92`, the value after the `E` are your current steps.
 - Preheat the hotend with `M104 S220`
 - Send `M83` to prepare the extruder
 - Use a caliper or measuring tape and mark 120 mm (measured downwards from the extruder intake) with a pencil on the filament
@@ -141,12 +145,13 @@ G26 C H200 P25 R25
 - Measure where your pencil marking is now. If it's exactly 20 mm to the extruder, it's perfectly calibrated
 - If it's less or more than 20 mm, subtract that value from 120 mm, e.g.:
 - If you measure 25 mm, your result would be 95 mm. If you measure 15 mm, your result would be 105 mm
-- Calculate your new value: (100 mm / actually extruded filament) * 92.6
+- Calculate your new value: (100 mm / actually extruded filament) * your current E-Steps (default: 92.6)
 - For example, if your markings are at 15 mm, you'd calculate: (100/105) * 92.6 = 88.19
 - Put in the new value like this: `M92 X80.00 Y80.00 Z400.00 Exxx.xx`, replacing `x` with your value
 - Save with `M500`
 - Finish with `M82`
 
+- You can repeat the process if you want to get even more precise, you'd have to replace 92.6 with your newly calibrated value in the next calculation.
 
 ### PID tuning
 
@@ -277,4 +282,3 @@ Notable contributors include:
 ## License
 
 Marlin is published under the [GPLv3 license](https://github.com/MarlinFirmware/Marlin/blob/1.0.x/COPYING.md) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
-
