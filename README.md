@@ -5,7 +5,7 @@ This is my slightly customized version of the [Marlin Firmware](https://github.c
 Feel free to discuss issues and work with me further optimizing this firmware!
 
 I am running this version on an i3 Mega Ultrabase V3 (for distinction of the different versions, check [this Thingiverse thread](https://www.thingiverse.com/groups/anycubic-i3-mega/forums/general/topic:27064)).
-Basically, this should work on every Ultrabase version that has two Z-axis endstops. The new Mega-S works too, but calibrating your extruder is mandatory since it needs to have increased E-steps to around fivefold of the original value, see the instructions below.
+Basically, this should work on every Ultrabase version that has two Z-axis endstops. The new Mega-S could work too but is not thoroughly tested. E-steps need to be set to 384 (`M92 E384.00` + `M500`), and calibration is recommended as per the instructions below.
 
 Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine. Since I have reduced the acceleration and jerk settings a bit, depending on your slicer the estimated print time might be around 20% lower. You can compensate that loss of speed by raising the general print speed without losing quality.
 
@@ -13,8 +13,9 @@ Note: This is just a firmware, not magic. A big part of print quality still depe
 
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
-- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0). If you want to find out what version really is on your printer you can send the code `M115` and read the response.
-- Possible bugs with aborting prints after pausing via display. Simply reboot the printer manually if you find yourself unable to cancel the print.
+- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0).
+- Cancelling prints via display is buggy sometimes, simply reboot the printer when the menu shows an error. Protip: Switch to OctoPrint.
+- A few parts cooling fan models (e.g. some Sunon 5015) might have trouble running slower than 100%. If that's the case, use [this release](https://github.com/davidramiro/Marlin-AI3M/releases/tag/v19.01.22-pwm).
 
 ## Why use this?
 
@@ -65,18 +66,50 @@ I provided three different precompiled hex files: One for no modifications on th
 
 If you have issues with an uneven bed, this is a great feature.
 
-- Level your preheated bed as well as you can
-- Send `G29 S1`, your nozzle will go to the first calibration position
-- Don't adjust the bed itself with screws, only use software from here on:
-- Use a paper (I recommend using thermopaper like a receipt or baking paper)
-- Use the onscreen controls or a tool like OctoPrint to lower or raise your nozzle until you feel a light resistance
-- If 0.1 mm steps are not enough, you can send specific commands down to 0.02 mm via those three commands:
-- To raise: `G91`, `G1 Z+0.02`, `G90` (one after another, not in one line)
-- To lower: `G91`, `G1 Z-0.02`, `G90`
-- I also added fine Z axis controls to the special menu, might be easier to use.
-- When done, send `G29 S2` and repeat the process for the next level point. Continue with `G29 S2`every time.
-- After finishing the 25 points, the printer will beep and calculate.
-- After seeing `ok` in the console, send `M500` to save.
+- Insert an SD card, enter the print menu.
+- Enter the special menu by selecting it and pressing the round arrow:
+
+![Special Menu][menu]
+
+- In this menu, the round arrow is used to execute the command you selected.
+- Preheat the bed to 60°C with this entry: (if you usually print with a hotter bed, use the Anycubic menu)
+
+![Preheat bed][preheat]
+
+- Level your preheated bed as well as you can with the four screws.
+- Start the mesh leveling:
+
+![Start MMBL][start]
+
+- Your nozzle will now move to the first calibration position.
+- Don't adjust the bed itself with screws, only use software from here on!
+- Use a paper - I recommend using thermopaper like a receipt or baking paper
+- Use the onscreen controls to lower or raise your nozzle until you feel a light resistance: (If you want to send the same command multiple times, select the item again, even though it is still marked red.)
+
+![Z axis controls][control]
+
+- Once finished , move to the next point:
+
+![Next mesh point][next]
+
+- Repeat the last two steps until all 25 points are done.
+- Your printer will beep, wait 20 seconds and then save:
+
+
+![Save to EEPROM][save]
+
+- Reboot your printer.
+
+
+[menu]: https://kore.cc/i3mega/mmbl/menu.jpg "Special Menu"
+[preheat]: https://kore.cc/i3mega/mmbl/preheat.jpg "Preheat 60C"
+[start]: https://kore.cc/i3mega/mmbl/start.jpg "Start Mesh leveling"
+[next]: https://kore.cc/i3mega/mmbl/next.jpg "Next Mesh point"
+[control]: https://kore.cc/i3mega/mmbl/control.jpg "Z axis control"
+[save]: https://kore.cc/i3mega/mmbl/save.jpg "Save to EEPROM"
+
+### After leveling:
+
 - Reboot the printer.
 - To ensure your mesh gets used on every print from now on, go into your slicer settings and look for the start GCode
 - Look for the Z-homing (either just `G28` or `G28 Z0`) command and insert these two right underneath it:
@@ -86,7 +119,15 @@ M420 S1
 ```
 - Enjoy never having to worry about an uneven bed again!
 
-Note: By default, this firmware probes 25 points. This might take little while, if you don't need an as precise mesh, you can change the grid size by sending `G29 Px` before starting the leveling. E.g., `G29 P3` results in a 3x3 mesh, thus only 9 points.
+
+#### Manual commands for use with OctoPrint etc.:
+
+- `G29 S1` - Start MMBL
+- `G29 S2` - Next Mesh point
+- Raising Z: `G91`, `G1 Z0.02`, `G90` (one after another, not in one line)
+- Lowering Z: `G91`, `G1 Z-0.02`, `G90`
+- After seeing `ok` in the console, send `M500` to save.
+
 
 ### Testing your bed leveling
 
@@ -105,6 +146,7 @@ G26 C H200 P25 R25
 
 ### Extruder steps
 
+- Get your old E-Steps with `M503`. Look for the line starting with `M92`, the value after the `E` are your current steps.
 - Preheat the hotend with `M104 S220`
 - Send `M83` to prepare the extruder
 - Use a caliper or measuring tape and mark 120 mm (measured downwards from the extruder intake) with a pencil on the filament
@@ -113,12 +155,13 @@ G26 C H200 P25 R25
 - Measure where your pencil marking is now. If it's exactly 20 mm to the extruder, it's perfectly calibrated
 - If it's less or more than 20 mm, subtract that value from 120 mm, e.g.:
 - If you measure 25 mm, your result would be 95 mm. If you measure 15 mm, your result would be 105 mm
-- Calculate your new value: (100 mm / actually extruded filament) * 92.6
+- Calculate your new value: (100 mm / actually extruded filament) * your current E-Steps (default: 92.6)
 - For example, if your markings are at 15 mm, you'd calculate: (100/105) * 92.6 = 88.19
 - Put in the new value like this: `M92 X80.00 Y80.00 Z400.00 Exxx.xx`, replacing `x` with your value
 - Save with `M500`
 - Finish with `M82`
 
+- You can repeat the process if you want to get even more precise, you'd have to replace 92.6 with your newly calibrated value in the next calculation.
 
 ### PID tuning
 
@@ -153,18 +196,20 @@ After flashing the new version, issue a `M502` and `M500`. After that, enter eve
 
 ## Detailed changes:
 
-- Thermal runaway protection enabled
+- Thermal runaway protection enabled and tweaked
+- Manual mesh bed leveling enabled ([check this link](https://github.com/MarlinFirmware/Marlin/wiki/Manual-Mesh-Bed-Leveling) to learn more about it)
+- Heatbed PID mode enabled
+- TMC2208 configured in standalone mode
 - Stepper orientation flipped (you don't have to flip the connectors on the board anymore)
 - Linear advance unlocked (Off by default. [Research, calibrate](http://marlinfw.org/docs/features/lin_advance.html) and then enable with `M900 Kx`)
 - S-Curve Acceleration enabled
 - G26 Mesh Validation enabled
 - Some redundant code removed to save memory
-- Manual mesh bed leveling enabled ([check this link](https://github.com/MarlinFirmware/Marlin/wiki/Manual-Mesh-Bed-Leveling) to learn more about it)
-- Heatbed PID mode enabled
 - Minor tweaks on default jerk and acceleration
+- Printcounter enabled (`M78`)
 
 
-## Changes by derhopp:
+## Changes by [derhopp](https://github.com/derhopp/):
 
 - 12V capability on FAN0 (parts cooling fan) enabled
 - Buzzer disabled (e.g. startup beep)
