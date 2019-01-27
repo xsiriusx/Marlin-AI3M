@@ -1124,7 +1124,7 @@ void Temperature::init() {
   #if HAS_FAN0
     SET_OUTPUT(FAN_PIN);
     #if ENABLED(FAST_PWM_FAN)
-      setPwmFrequency(FAN_PIN, 1); // No prescaling. Pwm frequency = F_CPU/256/8
+      setPwmFrequency(FAN_PIN, 2); // No prescaling. Pwm frequency = F_CPU/256/8
     #endif
   #endif
 
