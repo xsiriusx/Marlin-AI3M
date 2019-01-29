@@ -1,4 +1,6 @@
-# Anycubic i3 Mega Marlin 1.1.9 by davidramiro
+# Anycubic i3 Mega Marlin 2.0.x-bugfix by davidramiro
+
+__Not for production use. Use with caution!__
 
 This is my slightly customized version of the [Marlin Firmware](https://github.com/MarlinFirmware/Marlin), gratefully based on [derhopp's repo](https://github.com/derhopp/Marlin-with-Anycubic-i3-Mega-TFT) with his remarkable efforts to get the Anycubic i3 Mega TFT screen to work.
 
@@ -13,7 +15,7 @@ Note: This is just a firmware, not magic. A big part of print quality still depe
 
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
-- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0). 
+- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0).
 - Cancelling prints via display is buggy sometimes, simply reboot the printer when the menu shows an error. Protip: Switch to OctoPrint.
 - A few parts cooling fan models (e.g. some Sunon 5015) might have trouble running slower than 100%. If that's the case, use [this release](https://github.com/davidramiro/Marlin-AI3M/releases/tag/v19.01.22-pwm).
 
@@ -25,25 +27,14 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 - Much more efficient bed heating by using PID control. This uses less power and holds the temperature at a steady level. Highly recommended for printing ABS.
 - Fairly loud fans, while almost every one of them is easily replaced, the stock FW only gives out 9V instead of 12V on the parts cooling fan so some fans like Noctua don't run like they should. This is fixed in this firmware.
 - Even better print quality by adding Linear Advance, S-Curve Acceleration and some tweaks on jerk and acceleration.
-- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor. 
+- Thermal runaway protection: Reducing fire risk by detecting a faulty or misaligned thermistor.
 - Very loud stock stepper motor drivers, easily replaced by Watterott or FYSETC TMC2208. To do that, you'd usually have to flip the connectors on the board, this is not necessary using this firmware.
 - No need to slice and upload custom bed leveling tests, simply start one with a simple G26 command.
 - Easily start an auto PID tune or mesh bed leveling via the special menu (insert SD card, select special menu and press the round arrow)
 
 ## How to flash this?
 
-I provided three different precompiled hex files: One for no modifications on the stepper motor drivers - good for people who didn't touch anything yet, one for boards with TMC2208 installed and where the connectors have been flipped and one with TMC2208 and the connectors in original orientation.
-
-### Choose your precompiled hex:
-
-- Download the precompiled firmware here: [Releases](https://github.com/davidramiro/Marlin-AI3M/releases)
-- Choose the correct hex file:
-- For TMC2208 with connectors in original orientation, use `Marlin-AI3M-XXXXXX-TMC2208.hex`
-- If you use TMC2208 and already reversed your connectors, use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`
-- If you use a newer version of the TMC2208 that doesn't require the connector to be reversed (TMC2208 "v2.0" written on the PCB, chip on the top side), please also use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`.
-- If you use the original stepper motor drivers, use `Marlin-AI3M-XXXXXX-stock_drivers.hex`.
-
-### Or compile it yourself:
+### Compiling
 
 - Download Arduino IDE
 - Clone or download this repo
@@ -52,10 +43,10 @@ I provided three different precompiled hex files: One for no modifications on th
 - Customize if needed and under `Sketch`, select `Export compiled binary`
 - Look for the .hex file in your temporary directory, e.g. `.../AppData/Local/Temp/arduino_build_xxx/` (only the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
 
-### After obtaining the hex file: 
+### After obtaining the hex file:
 
 - Flash the hex with Cura, OctoPrint or similar
-- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer. 
+- Use a tool with a terminal (OctoPrint, Pronterface, Repetier Host, ...) to send commands to your printer.
 - Connect to the printer and send the following commands:
 - `M502` - load hard coded default values
 - `M500` - save them to EEPROM
@@ -71,7 +62,7 @@ If you have issues with an uneven bed, this is a great feature.
 
 ![Special Menu][menu]
 
-- In this menu, the round arrow is used to execute the command you selected. 
+- In this menu, the round arrow is used to execute the command you selected.
 - Preheat the bed to 60°C with this entry: (if you usually print with a hotter bed, use the Anycubic menu)
 
 ![Preheat bed][preheat]
@@ -218,78 +209,76 @@ After flashing the new version, issue a `M502` and `M500`. After that, enter eve
 
 
 
-## About Marlin
+# About Marlin
 
-<img align="right" src="../../raw/1.1.x/buildroot/share/pixmaps/logo/marlin-250.png" />
-
-Marlin is an optimized firmware for [RepRap 3D printers](http://reprap.org/) based on the [Arduino](https://www.arduino.cc/) platform. First created in 2011 for RepRap and Ultimaker printers, today Marlin drives a majority of the world's most popular 3D printers. Marlin delivers outstanding print quality with unprecedented control over the process.
-
+[![Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg?branch=RCBugFix)](https://travis-ci.org/MarlinFirmware/Marlin)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2224/badge.svg)](https://scan.coverity.com/projects/2224)
-[![Travis Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg)](https://travis-ci.org/MarlinFirmware/Marlin)
-[![Flattr Us!](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=ErikZalm&url=https://github.com/MarlinFirmware/Marlin&title=Marlin&language=&tags=github&category=software)
 
+<img align="top" width=175 src="buildroot/share/pixmaps/logo/marlin-250.png" />
 
-### Contributing to Marlin
+Additional documentation can be found at the [Marlin Home Page](http://marlinfw.org/).
+Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
 
-If you have coding or writing skills you're encouraged to contribute to Marlin. You may also contribute suggestions, feature requests, and bug reports through the Marlin Issue Queue.
+## Marlin 2.0 Bugfix Branch
 
-Before contributing, please read our [Contributing Guidelines](https://github.com/MarlinFirmware/Marlin/blob/1.1.x/.github/contributing.md) and [Code of Conduct](https://github.com/MarlinFirmware/Marlin/blob/1.1.x/.github/code_of_conduct.md).
+__Not for production use. Use with caution!__
 
-### Marlin Resources
+Marlin 2.0 takes this popular RepRap firmware to the next level with support for much faster 32-bit processor boards.
 
-- [Marlin Home Page](http://marlinfw.org/) - The latest Marlin documentation.
-- [Marlin Releases](https://github.com/MarlinFirmware/Marlin/releases) - All Marlin releases with release notes.
-- [RepRap.org Wiki Page](http://reprap.org/wiki/Marlin) - An overview of Marlin and its role in RepRap.
-- [Marlin Firmware Forum](http://forums.reprap.org/list.php?415) - Get help with configuration and troubleshooting.
-- [Marlin Firmware Facebook group](https://www.facebook.com/groups/1049718498464482) - Help from the community. (Maintained by [@thinkyhead](https://github.com/thinkyhead).)
-- [@MarlinFirmware](https://twitter.com/MarlinFirmware) on Twitter - Follow for news, release alerts, and tips. (Maintained by [@thinkyhead](https://github.com/thinkyhead).)
+This branch is for patches to the latest 2.0.x release version. Periodically this branch will form the basis for the next minor 2.0.x release.
 
-### Credits
+Download earlier versions of Marlin on the [Releases page](https://github.com/MarlinFirmware/Marlin/releases).
 
-Marlin's administrators are:
- - Scott Lahteine [[@thinkyhead](https://github.com/thinkyhead)]
- - Roxanne Neufeld [[@Roxy-3D](https://github.com/Roxy-3D)]
- - Bob Kuhn [[@Bob-the-Kuhn](https://github.com/Bob-the-Kuhn)]
- - Erik van der Zalm [[@ErikZalm](https://github.com/ErikZalm)]
+## Building Marlin 2.0
 
-Notable contributors include:
- - Alexey Shvetsov [[@alexxy](https://github.com/alexxy)]
- - Andreas Hardtung [[@AnHardt](https://github.com/AnHardt)]
- - Ben Lye [[@benlye](https://github.com/benlye)]
- - Bernhard Kubicek [[@bkubicek](https://github.com/bkubicek)]
- - Bob Cousins [[@bobc](https://github.com/bobc)]
- - Petr Zahradnik [[@clexpert](https://github.com/clexpert)]
- - Jochen Groppe [[@CONSULitAS](https://github.com/CONSULitAS)]
- - David Braam [[@daid](https://github.com/daid)]
- - Eduardo José Tagle [[@ejtagle](https://github.com/ejtagle)]
- - Ernesto Martinez [[@emartinez167](https://github.com/emartinez167)]
- - Edward Patel [[@epatel](https://github.com/epatel)]
- - F. Malpartida [[@fmalpartida](https://github.com/fmalpartida)]
- - João Brazio [[@jbrazio](https://github.com/jbrazio)]
- - Kai [[@Kaibob2](https://github.com/Kaibob2)]
- - Luc Van Daele [[@LVD-AC](https://github.com/LVD-AC)]
- - Alberto Cotronei [[@MagoKimbra](https://github.com/MagoKimbra)]
- - Marcio Teixeira [[@marcio-ao](https://github.com/marcio-ao)]
- - Chris Palmer [[@nophead](https://github.com/nophead)]
- - Chris Pepper [[@p3p](https://github.com/p3p)]
- - Steeve Spaggi [[@studiodyne](https://github.com/studiodyne)]
- - Thomas Moore [[@tcm0116](https://github.com/tcm0116)]
- - Teemu Mäntykallio [[@teemuatlut](https://github.com/teemuatlut)]
- - Nico Tonnhofer [[@Wurstnase](https://github.com/Wurstnase)]
- - [[@android444](https://github.com/android444)]
- - [[@bgort](https://github.com/bgort)]
- - [[@GMagician](https://github.com/GMagician)]
- - [[@Grogyan](https://github.com/Grogyan)]
- - [[@maverikou](https://github.com/maverikou)]
- - [[@oysteinkrog](https://github.com/oysteinkrog)]
- - [[@paclema](https://github.com/paclema)]
- - [[@paulusjacobus](https://github.com/paulusjacobus)]
- - [[@psavva](https://github.com/psavva)]
- - [[@Tannoo](https://github.com/Tannoo)]
- - [[@TheSFReader](https://github.com/TheSFReader)]
- - ...and many others
+To build Marlin 2.0 you'll need [Arduino IDE 1.9](https://www.arduino.cc/en/main/software) or [PlatformIO](http://docs.platformio.org/en/latest/ide.html#platformio-ide). We've posted detailed instructions on how to [build Marlin 2.0 for ARM](http://marlinfw.org/docs/basics/install_arm.html).
+
+## Hardware Abstraction Layer (HAL)
+
+Marlin 2.0 adds a new abstraction layer so that Marlin can build and run on 32-bit boards while still retaining full 8-bit AVR compatibility. In this way, features can be enhanced for more powerful platforms while still supporting AVR, whereas splitting up the code would make it harder to maintain and keep everything in sync.
+
+### Current HALs
+
+  name|processor|speed|flash|sram|logic|fpu
+  ----|---------|-----|-----|----|-----|---
+  [Arduino AVR](https://www.arduino.cc/)|ATmega, ATTiny, etc.|16-20MHz|64-256k|2-8k|5V|no
+  [Teensy++ 2.0](http://www.microchip.com/wwwproducts/en/AT90USB1286)|[AT90USB1286](http://www.microchip.com/wwwproducts/en/AT90USB1286)|16MHz|128k|8k|5V|no
+  [Due](https://www.arduino.cc/en/Guide/ArduinoDue), [RAMPS-FD](http://www.reprap.org/wiki/RAMPS-FD), etc.|[SAM3X8E ARM-Cortex M3](http://www.microchip.com/wwwproducts/en/ATsam3x8e)|84MHz|512k|64+32k|3.3V|no
+  [Re-ARM](https://www.kickstarter.com/projects/1245051645/re-arm-for-ramps-simple-32-bit-upgrade)|[LPC1768 ARM-Cortex M3](http://www.nxp.com/products/microcontrollers-and-processors/arm-based-processors-and-mcus/lpc-cortex-m-mcus/lpc1700-cortex-m3/512kb-flash-64kb-sram-ethernet-usb-lqfp100-package:LPC1768FBD100)|100MHz|512k|32+16+16k|3.3-5V|no
+  [MKS SBASE](http://forums.reprap.org/read.php?13,499322)|LPC1768 ARM-Cortex M3|100MHz|512k|32+16+16k|3.3-5V|no
+  [Azteeg X5 GT](https://www.panucatt.com/azteeg_X5_GT_reprap_3d_printer_controller_p/ax5gt.htm)|LPC1769 ARM-Cortex M3|120MHz|512k|32+16+16k|3.3-5V|no
+  [Selena Compact](https://github.com/Ales2-k/Selena)|LPC1768 ARM-Cortex M3|100MHz|512k|32+16+16k|3.3-5V|no
+  [Teensy 3.5](https://www.pjrc.com/store/teensy35.html)|ARM-Cortex M4|120MHz|512k|192k|3.3-5V|yes
+  [Teensy 3.6](https://www.pjrc.com/store/teensy36.html)|ARM-Cortex M4|180MHz|1M|256k|3.3V|yes
+
+### HALs in Development
+
+  name|processor|speed|flash|sram|logic|fpu
+  ----|---------|-----|-----|----|-----|---
+  [STEVAL-3DP001V1](http://www.st.com/en/evaluation-tools/steval-3dp001v1.html)|[STM32F401VE Arm-Cortex M4](http://www.st.com/en/microcontrollers/stm32f401ve.html)|84MHz|512k|64+32k|3.3-5V|yes
+  [Smoothieboard](http://reprap.org/wiki/Smoothieboard)|LPC1769 ARM-Cortex M3|120MHz|512k|64k|3.3-5V|no
+
+## Submitting Patches
+
+Proposed patches should be submitted as a Pull Request against the ([bugfix-2.0.x](https://github.com/MarlinFirmware/Marlin/tree/bugfix-2.0.x)) branch.
+
+- This branch is for fixing bugs and integrating any new features for the duration of the Marlin 2.0.x life-cycle.
+- Follow the [Coding Standards](http://marlinfw.org/docs/development/coding_standards.html) to gain points with the maintainers.
+- Please submit your questions and concerns to the [Issue Queue](https://github.com/MarlinFirmware/Marlin/issues).
+
+### [RepRap.org Wiki Page](http://reprap.org/wiki/Marlin)
+
+## Credits
+
+The current Marlin dev team consists of:
+ - Roxanne Neufeld [[@Roxy-3D](https://github.com/Roxy-3D)] - English
+ - Scott Lahteine [[@thinkyhead](https://github.com/thinkyhead)] - English
+ - Bob Kuhn [[@Bob-the-Kuhn](https://github.com/Bob-the-Kuhn)] - English
+ - Chris Pepper [[@p3p](https://github.com/p3p)] - English
+ - João Brazio [[@jbrazio](https://github.com/jbrazio)] - Portuguese, English
 
 ## License
 
-Marlin is published under the [GPLv3 license](https://github.com/MarlinFirmware/Marlin/blob/1.0.x/COPYING.md) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
+Marlin is published under the [GPL license](/LICENSE) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
 
+While we can't prevent the use of this code in products (3D printers, CNC, etc.) that are closed source or crippled by a patent, we would prefer that you choose another firmware or, better yet, make your own.

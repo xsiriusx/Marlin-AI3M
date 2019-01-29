@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Marlin 3D Printer Firmware
  * Copyright (C) 2016 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -32,7 +32,7 @@
  */
 #ifndef CONFIGURATION_ADV_H
 #define CONFIGURATION_ADV_H
-#define CONFIGURATION_ADV_H_VERSION 010109
+#define CONFIGURATION_ADV_H_VERSION 020000
 
 // @section temperature
 
@@ -331,18 +331,15 @@
   #endif
 #endif
 
-/**
- * Dual X Carriage
- *
- * This setup has two X carriages that can move independently, each with its own hotend.
- * The carriages can be used to print an object with two colors or materials, or in
- * "duplication mode" it can print two identical or X-mirrored objects simultaneously.
- * The inactive carriage is parked automatically to prevent oozing.
- * X1 is the left carriage, X2 the right. They park and home at opposite ends of the X axis.
- * By default the X2 stepper is assigned to the first unused E plug on the board.
- */
+// Enable this for dual x-carriage printers.
+// A dual x-carriage design has the advantage that the inactive extruder can be parked which
+// prevents hot-end ooze contaminating the print. It also reduces the weight of each x-carriage
+// allowing faster printing speeds. Connect your X2 stepper to the first unused E plug.
 //#define DUAL_X_CARRIAGE
 #if ENABLED(DUAL_X_CARRIAGE)
+  // Configuration for second X-carriage
+  // Note: the first x-carriage is defined as the x-carriage which homes to the minimum endstop;
+  // the second x-carriage always homes to the maximum endstop.
   #define X1_MIN_POS X_MIN_POS  // set minimum to ensure first x-carriage doesn't hit the parked second X-carriage
   #define X1_MAX_POS X_BED_SIZE // set maximum to ensure first x-carriage doesn't hit the parked second X-carriage
   #define X2_MIN_POS 80     // set minimum to ensure second x-carriage doesn't hit the parked first X-carriage
@@ -505,7 +502,7 @@
 #endif
 
 //#define DIGIPOT_MCP4018          // Requires library from https://github.com/stawel/SlowSoftI2CMaster
-#define DIGIPOT_I2C_NUM_CHANNELS 8 // 5DPRINT: 4     AZTEEG_X3_PRO: 8
+#define DIGIPOT_I2C_NUM_CHANNELS 8 // 5DPRINT: 4     AZTEEG_X3_PRO: 8     MKS SBASE: 5
 // Actual motor currents in Amps. The number of entries must match DIGIPOT_I2C_NUM_CHANNELS.
 // These correspond to the physical drivers, so be mindful if the order is changed.
 #define DIGIPOT_I2C_MOTOR_CURRENTS { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }  //  AZTEEG_X3_PRO
@@ -790,6 +787,30 @@
   //#define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
 #endif
 
+/**
+ * Repeatedly attempt G29 leveling until it succeeds.
+ * Stop after G29_MAX_RETRIES attempts.
+ */
+//#define G29_RETRY_AND_RECOVER
+#if ENABLED(G29_RETRY_AND_RECOVER)
+  #define G29_MAX_RETRIES 3
+  #define G29_HALT_ON_FAILURE
+  /**
+   * Specify the GCODE commands that will be executed when leveling succeeds,
+   * between attempts, and after the maximum number of retries have been tried.
+   */
+  #define G29_SUCCESS_COMMANDS "M117 Bed leveling done."
+  #define G29_RECOVER_COMMANDS "M117 Probe failed. Rewiping.\nG28\nG12 P0 S12 T0"
+  #define G29_FAILURE_COMMANDS "M117 Bed leveling failed.\nG0 Z10\nM300 P25 S880\nM300 P50 S0\nM300 P25 S880\nM300 P50 S0\nM300 P25 S880\nM300 P50 S0\nG4 S1"
+  /**
+   * Specify an action command to send to the host on a recovery attempt or failure.
+   * Will be sent in the form '//action:ACTION_ON_G29_FAILURE', e.g. '//action:probe_failed'.
+   * The host must be configured to handle the action command.
+   */
+  #define G29_ACTION_ON_RECOVER "probe_rewipe"
+  #define G29_ACTION_ON_FAILURE "probe_failed"
+#endif
+
 // @section extras
 
 //
@@ -804,7 +825,7 @@
 #endif
 
 // Support for G5 with XYZE destination and IJPQ offsets. Requires ~2666 bytes.
-#define BEZIER_CURVE_SUPPORT
+//#define BEZIER_CURVE_SUPPORT
 
 // G38.2 and G38.3 Probe Target
 // Set MULTIPLE_PROBING if you want G38 to double touch
@@ -821,6 +842,7 @@
  *     0 : No delay (Expect at least 10µS since one Stepper ISR must transpire)
  *    20 : Minimum for TMC2xxx drivers
  *   200 : Minimum for A4988 drivers
+ *   400 : Minimum for A5984 drivers
  *   500 : Minimum for LV8729 drivers (guess, no info in datasheet)
  *   650 : Minimum for DRV8825 drivers
  *  1500 : Minimum for TB6600 drivers (guess, no info in datasheet)
@@ -833,8 +855,7 @@
 /**
  * Minimum stepper driver pulse width (in µs)
  *   0 : Smallest possible width the MCU can produce, compatible with TMC2xxx drivers
- *   1 : Minimum for A4988 stepper drivers
- *   1 : Minimum for LV8729 stepper drivers
+ *   1 : Minimum for A4988, A5984, and LV8729 stepper drivers
  *   2 : Minimum for DRV8825 stepper drivers
  *   3 : Minimum for TB6600 stepper drivers
  *  30 : Minimum for TB6560 stepper drivers
@@ -895,7 +916,7 @@
 // Without XON/XOFF flow control (see SERIAL_XON_XOFF below) 32 bytes should be enough.
 // To use flow control, set this buffer size to at least 1024 bytes.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
-//#define RX_BUFFER_SIZE 32
+//#define RX_BUFFER_SIZE 1024
 
 #if RX_BUFFER_SIZE >= 1024
   // Enable to have the controller send XON/XOFF control characters to
@@ -1084,8 +1105,8 @@
  * in your `pins_MYBOARD.h` file. (e.g., RAMPS 1.4 uses AUX3 pins `X_CS_PIN 53`, `Y_CS_PIN 49`, etc.).
  * You may also use software SPI if you wish to use general purpose IO pins.
  *
- * You'll also need the TMC2130Stepper Arduino library
- * (https://github.com/teemuatlut/TMC2130Stepper).
+ * The TMC2130Stepper library is required for this stepper driver.
+ * https://github.com/teemuatlut/TMC2130Stepper
  *
  * To use TMC2208 stepper UART-configurable stepper drivers
  * connect #_SERIAL_TX_PIN to the driver side PDN_UART pin with a 1K resistor.
@@ -1093,13 +1114,13 @@
  * to PDN_UART without a resistor.
  * The drivers can also be used with hardware serial.
  *
- * You'll also need the TMC2208Stepper Arduino library
- * (https://github.com/teemuatlut/TMC2208Stepper).
+ * The TMC2208Stepper library is required for this stepper driver.
+ * https://github.com/teemuatlut/TMC2208Stepper
  */
 #if HAS_TRINAMIC
 
   #define R_SENSE           0.11  // R_sense resistor for SilentStepStick2130
-  #define HOLD_MULTIPLIER    0.2  // Scales down the holding current from run current
+  #define HOLD_MULTIPLIER    0.5  // Scales down the holding current from run current
   #define INTERPOLATE       true  // Interpolate X/Y/Z_MICROSTEPS to 256
 
   #define X_CURRENT          800  // rms current in mA. Multiply by 1.41 for peak current.
@@ -1182,8 +1203,8 @@
   #define X2_HYBRID_THRESHOLD    100
   #define Y_HYBRID_THRESHOLD     100
   #define Y2_HYBRID_THRESHOLD    100
-  #define Z_HYBRID_THRESHOLD       4
-  #define Z2_HYBRID_THRESHOLD      4
+  #define Z_HYBRID_THRESHOLD       3
+  #define Z2_HYBRID_THRESHOLD      3
   #define E0_HYBRID_THRESHOLD     30
   #define E1_HYBRID_THRESHOLD     30
   #define E2_HYBRID_THRESHOLD     30
@@ -1622,6 +1643,7 @@
   #define MAX7219_NUMBER_UNITS 1   // Number of Max7219 units in chain.
   #define MAX7219_ROTATE       0   // Rotate the display clockwise (in multiples of +/- 90°)
                                    // connector at:  right=0   bottom=-90  top=90  left=180
+
   /**
    * Sample debug features
    * If you add more debug displays, be careful to avoid conflicts!
@@ -1646,6 +1668,15 @@
 #if ENABLED(NANODLP_Z_SYNC)
   //#define NANODLP_ALL_AXIS  // Enables "Z_move_comp" output on any axis move.
                               // Default behaviour is limited to Z axis only.
+#endif
+
+/**
+ * WiFi Support (Espressif ESP32 WiFi)
+ */
+//#define WIFISUPPORT
+#if ENABLED(WIFISUPPORT)
+  #define WIFI_SSID "Wifi SSID"
+  #define WIFI_PWD  "Wifi Password"
 #endif
 
 // Enable Marlin dev mode which adds some special commands
