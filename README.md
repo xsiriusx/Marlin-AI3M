@@ -8,15 +8,18 @@ This branch is set up to work for the Mega-S. Consider this a work-in-progress a
 
 Feel free to discuss issues and work with me further optimizing this firmware!
 
-Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine. Since I have reduced the acceleration and jerk settings a bit, depending on your slicer the estimated print time might be around 20% lower. You can compensate that loss of speed by raising the general print speed without losing quality.
+Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine.
 
 ## Known issues:
 
+- **Cura users: Please turn off jerk and acceleration control in your print settings (not visible by default, select advanced visibility to unlock them). Cura's high default jerk and acceleration might cause shifted layers if you use TMC2208.**
+- Estimated print times from your slicer might be slightly off.
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
 - The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0).
 - Cancelling prints via display is buggy sometimes, simply reboot the printer when the menu shows an error. Protip: Switch to OctoPrint.
 - A few parts cooling fan models (e.g. some Sunon 5015) might have trouble running slower than 100%. If that's the case, use [this release](https://github.com/davidramiro/Marlin-AI3M/releases/tag/v19.01.22-pwm).
+
 
 ## Why use this?
 
@@ -30,6 +33,7 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 - Very loud stock stepper motor drivers, easily replaced by Watterott or FYSETC TMC2208. To do that, you'd usually have to flip the connectors on the board, this is not necessary using this firmware.
 - No need to slice and upload custom bed leveling tests, simply start one with a simple G26 command.
 - Easily start an auto PID tune or mesh bed leveling via the special menu (insert SD card, select special menu and press the round arrow)
+- Filament change feature enabled: Switch colors/material mid print with `M600` (instructions below)
 
 ## How to flash this?
 
@@ -50,7 +54,8 @@ I provided three different precompiled hex files: One for no modifications on th
 - Clone or download this repo
 - In the IDE, under `Tools -> Board` select `Genuino Mega 2560` and `ATmega2560`
 - Open Marlin.ino in the Marlin directory of this repo
-- Customize if needed and under `Sketch`, select `Export compiled binary`
+- Customize if needed (e.g. motor directions and type at line `559` to `566` and line `857` to `865` in `Configuration.h`)
+- Under `Sketch`, select `Export compiled binary`
 - Look for the .hex file in your temporary directory, e.g. `.../AppData/Local/Temp/arduino_build_xxx/` (only the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
 
 ### After obtaining the hex file:
@@ -179,6 +184,35 @@ Note: These commands are tweaked for PLA printing at up to 210/60 °C. If you ru
 
 **Reminder**: PID tuning sometimes fails. If you get fluctuating temperatures or the heater even fails to reach your desired temperature after tuning, you can always go back to the stock settings by sending `M301 P16.43 I1.04 D61.37` and save with `M500`.
 
+## M600 Filament Change
+
+**A USB host (OctoPrint, Pronterface, ...) is required to use this.**
+
+#### Configuration:
+- Send `M603 L0 U0` to use manual loading & unloading. (Recommended)
+- Send `M603 L500 U500` to use automatic loading & unloading
+- Save with `M500`
+
+#### Filament change process (manual loading):
+- Place `M600` in your GCode at the desired layer or send it manually
+- The nozzle will park and your printer will beep
+- Remove the filament from the bowden tube
+- Insert the new filament right up to the nozzle, just until a bit of plastic oozes out
+- Remove the excess filament from the nozzle with tweezers
+- Send `M108` via your USB host.
+- Note for OctoPrint users: After sending `M108`, enable the advanced options at the bottom of the terminal and press `Fake Acknowledgement`
+
+#### Filament change process (automatic loading):
+- Place `M600` in your GCode at the desired layer or send it manually
+- The nozzle will park
+- The printer will remove the filament right up to the extruder and beep when finished
+- Insert the new filament just until where the bowden tube begins
+- Send `M108` via your USB host.
+- Note for OctoPrint users: After sending `M108`, enable the advanced options at the bottom of the terminal and press `Fake Acknowledgement`
+- The printer will now pull in the new filament, watch out since it might ooze quite a bit from the nozzle
+- Remove the excess filament from the nozzle with tweezers
+
+
 ## Updating
 
 ### Back up & restore your settings
@@ -208,6 +242,7 @@ After flashing the new version, issue a `M502` and `M500`. After that, enter eve
 - Some redundant code removed to save memory
 - Minor tweaks on default jerk and acceleration
 - Printcounter enabled (`M78`)
+- `M600` filament change feature enabled
 
 
 ## Changes by [derhopp](https://github.com/derhopp/):
