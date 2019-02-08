@@ -21,6 +21,7 @@
  */
 
 #include "../gcode.h"
+#include "../queue.h"
 #include "../../module/temperature.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
@@ -259,4 +260,8 @@ void GcodeSuite::M109() {
   #if DISABLED(BUSY_WHILE_HEATING)
     KEEPALIVE_STATE(IN_HANDLER);
   #endif
+  
+  // flush the serial buffer after heating to prevent lockup by m105
+  flush_and_request_resend();
+
 }

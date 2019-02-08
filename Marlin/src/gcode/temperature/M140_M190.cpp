@@ -25,6 +25,7 @@
 #if HAS_HEATED_BED
 
 #include "../gcode.h"
+#include "../queue.h"
 #include "../../module/temperature.h"
 #include "../../module/motion.h"
 #include "../../lcd/ultralcd.h"
@@ -191,6 +192,10 @@ void GcodeSuite::M190() {
   #if DISABLED(BUSY_WHILE_HEATING)
     KEEPALIVE_STATE(IN_HANDLER);
   #endif
+
+  // flush the serial buffer after heating to prevent lockup by m105
+  flush_and_request_resend();
+
 }
 
 #endif // HAS_HEATED_BED
