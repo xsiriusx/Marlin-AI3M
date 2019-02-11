@@ -10,15 +10,16 @@ Feel free to discuss issues and work with me further optimizing this firmware!
 
 Note: This is just a firmware, not magic. A big part of print quality still depends on your slicer settings and mechanical condition of your machine.
 
+#### Make sure to take a look at the [Wiki](https://github.com/davidramiro/Marlin-AI3M/wiki/), especially the [FAQ](https://github.com/davidramiro/Marlin-AI3M/wiki/Frequently-Asked-Questions).
+
+
 ## Known issues:
 
 - **Cura users: Please turn off jerk and acceleration control in your print settings (not visible by default, select advanced visibility to unlock them). Cura's high default jerk and acceleration might cause shifted layers if you use TMC2208.**
 - Estimated print times from your slicer might be slightly off.
 - Special characters on any file or folders name on the SD card will cause the file menu to freeze. Simply replace or remove every special character (Chinese, Arabic, Russian, accents, German & Scandinavian umlauts, ...) from the name. Symbols like dashes or underscores are no problem.
 **Important note: On the SD card that comes with the printer there is a folder with Chinese characters in it by default. Please rename or remove it.**
-- The firmware is not reflected on the TFT-display. As the display has its own closed source firmware, you will remain to see the original Anycubic menu showing the old version number (1.1.0).
 - Cancelling prints via display is buggy sometimes, simply reboot the printer when the menu shows an error. Protip: Switch to OctoPrint.
-- A few parts cooling fan models (e.g. some Sunon 5015) might have trouble running slower than 100%. If that's the case, use [this release](https://github.com/davidramiro/Marlin-AI3M/releases/tag/v19.01.22-pwm).
 
 
 ## Why use this?
@@ -54,9 +55,9 @@ I provided three different precompiled hex files: One for no modifications on th
 - Clone or download this repo
 - In the IDE, under `Tools -> Board` select `Genuino Mega 2560` and `ATmega2560`
 - Open Marlin.ino in the Marlin directory of this repo
-- Customize if needed (e.g. motor directions and type at line `559` to `566` and line `857` to `865` in `Configuration.h`)
+- [Customize if needed](https://github.com/davidramiro/Marlin-AI3M/wiki/Customization-&-Compiling) (e.g. motor directions and type at line `559` to `566` and line `857` to `865` in `Configuration.h`)
 - Under `Sketch`, select `Export compiled binary`
-- Look for the .hex file in your temporary directory, e.g. `.../AppData/Local/Temp/arduino_build_xxx/` (only the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
+- Look for the .hex file in the Marlin directory (only use the `Marlin.ino.hex`, not the `Marlin.ino.with_bootloader.hex`!)
 
 ### After obtaining the hex file:
 
@@ -66,9 +67,10 @@ I provided three different precompiled hex files: One for no modifications on th
 - `M502` - load hard coded default values
 - `M500` - save them to EEPROM
 
-## Calibration & Tuning
+#### Calibration and other instructions have been moved to the [Wiki](https://github.com/davidramiro/Marlin-AI3M/wiki/Calibration).
 
-### Manual Mesh Bed Leveling
+
+## Manual Mesh Bed Leveling
 
 If you have issues with an uneven bed, this is a great feature.
 
@@ -144,6 +146,7 @@ G26 C H200 P25 R25
 ```
 - To adjust your filament's needed temperature, change the number of the `H` parameter
 - If your leveling is good, you will have a complete pattern of your mesh on your bed that you can peel off in one piece
+- Don't worry if the test looks a bit messy, the important thing is just that the line width is the same all over the mesh
 - Optional: Hang it up on a wall to display it as a trophy of how great your leveling skills are.
 
 
