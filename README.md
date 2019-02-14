@@ -1,3 +1,14 @@
+TriangleLabs 3Dtouch enabled https://www.aliexpress.com/item/Trianglelab-A-2019-3D-TOUCH-sensor-Free-Shipping-Auto-BED-Leveling-Sensor-BL-AUTO-touch-sensor/32949450525.html?spm=a2g0s.9042311.0.0.175f4c4de10hdr
+
+TMC2208 support
+
+g28 home
+g29 autolevelling
+m500 save in eeprom
+
+remember calculate offset probe -----> hotend
+
+
 # Anycubic i3 Mega Marlin 1.1.9 by davidramiro
 
 This is my slightly customized version of the [Marlin Firmware](https://github.com/MarlinFirmware/Marlin), gratefully based on [derhopp's repo](https://github.com/derhopp/Marlin-with-Anycubic-i3-Mega-TFT) with his remarkable efforts to get the Anycubic i3 Mega TFT screen to work.
