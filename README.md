@@ -52,15 +52,6 @@ While the i3 Mega is a great printer for its price and produces fantastic result
 
 I provided three different precompiled hex files: One for no modifications on the stepper motor drivers - good for people who didn't touch anything yet, one for boards with TMC2208 installed and where the connectors have been flipped and one with TMC2208 and the connectors in original orientation.
 
-### Choose your precompiled hex:
-
-- Download the precompiled firmware here: [Releases](https://github.com/davidramiro/Marlin-AI3M/releases)
-- Choose the correct hex file:
-- For TMC2208 with connectors in original orientation, use `Marlin-AI3M-XXXXXX-TMC2208.hex`
-- If you use TMC2208 and already reversed your connectors, use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`
-- If you use a newer version of the TMC2208 that doesn't require the connector to be reversed (TMC2208 "v2.0" written on the PCB, chip on the top side), please also use `Marlin-AI3M-XXXXXX-TMC2208_reversed.hex`.
-- If you use the original stepper motor drivers, use `Marlin-AI3M-XXXXXX-stock_drivers.hex`.
-
 ### Or compile it yourself:
 
 - Download Arduino IDE
